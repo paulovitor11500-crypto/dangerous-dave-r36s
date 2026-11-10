@@ -1,0 +1,32 @@
+
+name: Compilar Dangerous Dave
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libsdl2-dev
+
+      - name: Baixar codigo original
+        run: |
+          git clone https://github.com/MaiZure/lmdave.git
+
+      - name: Compilar lmdave
+        run: |
+          cd lmdave
+          gcc -x c lmdave.c -o lmdave $(sdl2-config --cflags --libs)
+
+      - name: Disponibilizar executavel
+        uses: actions/upload-artifact@v4
+        with:
+          name: dangerous-dave-linux-test
+          path: lmdave/lmdave
+          
