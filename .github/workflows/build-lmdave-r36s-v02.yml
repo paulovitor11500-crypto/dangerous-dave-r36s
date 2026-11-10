@@ -1,0 +1,41 @@
+
+name: Compilar Dangerous Dave R36S v0.2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'lmdave-r36s-v02.c'
+      - '.github/workflows/build-lmdave-r36s-v02.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Obter arquivos do projeto
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libsdl2-dev file binutils
+
+      - name: Obter cabecalho do lmdave
+        run: |
+          git clone --depth 1 https://github.com/MaiZure/lmdave.git upstream-lmdave
+
+      - name: Compilar codigo adaptado
+        run: |
+          cp lmdave-r36s-v02.c upstream-lmdave/lmdave.c
+          cd upstream-lmdave
+          gcc -O2 -Wall -x c lmdave.c -o lmdave $(sdl2-config --cflags --libs)
+          file lmdave
+          readelf -h lmdave | grep -E 'Class:|Machine:'
+
+      - name: Publicar executavel
+        uses: actions/upload-artifact@v4
+        with:
+          name: dangerous-dave-r36s-v02-arm64
+          path: upstream-lmdave/lmdave
+          
