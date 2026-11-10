@@ -1,0 +1,38 @@
+
+name: Compilar Dangerous Dave ARM64
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libsdl2-dev file
+
+      - name: Baixar codigo do lmdave
+        run: |
+          git clone https://github.com/MaiZure/lmdave.git
+
+      - name: Compilar para ARM64
+        run: |
+          cd lmdave
+          gcc -x c lmdave.c -o lmdave $(sdl2-config --cflags --libs)
+
+      - name: Verificar arquitetura
+        run: |
+          uname -m
+          file lmdave/lmdave
+          readelf -h lmdave/lmdave
+
+      - name: Disponibilizar executavel
+        uses: actions/upload-artifact@v4
+        with:
+          name: dangerous-dave-arm64-test
+          path: lmdave/lmdave
+          
