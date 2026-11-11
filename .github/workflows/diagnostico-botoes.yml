@@ -1,0 +1,32 @@
+
+name: Diagnostico Botoes R36S
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar SDL2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev
+
+      - name: Compilar ARM64
+        run: |
+          gcc -O2 diagnostico-botoes.c \
+            -o diagnostico-botoes \
+            $(sdl2-config --cflags --libs)
+          file diagnostico-botoes
+
+      - name: Publicar executavel
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostico-botoes-r36s-arm64
+          path: diagnostico-botoes
+          
