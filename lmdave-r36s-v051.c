@@ -202,7 +202,6 @@ static int show_game_over(SDL_Renderer *r) {
         over_rect(r,5,192,310,3,220,25,25);
         over_rect(r,5,5,3,190,220,25,25);
         over_rect(r,312,5,3,190,220,25,25);
-        title_text_centered(r,27,"DANGEROUS DAVE",2,215,215,215);
         title_text_centered(r,76,"GAME OVER",3,255,255,255);
         title_text_centered(r,73,"GAME OVER",3,225,25,25);
         over_dave(r);
