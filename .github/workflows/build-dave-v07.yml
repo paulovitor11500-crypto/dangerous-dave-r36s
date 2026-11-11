@@ -1,0 +1,43 @@
+
+name: Build Dangerous Dave R36S v0.7
+
+on:
+  push:
+    paths:
+      - 'dave_v07.c'
+      - '.github/workflows/build-dave-v07.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install SDL2 dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libsdl2-dev
+
+      - name: Download original lmdave
+        run: |
+          git clone --depth 1 https://github.com/MaiZure/lmdave.git upstream-lmdave
+
+      - name: Apply R36S v0.7 source
+        run: |
+          cp dave_v07.c upstream-lmdave/lmdave.c
+
+      - name: Compile ARM64 executable
+        run: |
+          cd upstream-lmdave
+          gcc -O2 -Wall -x c lmdave.c -o lmdave $(sdl2-config --cflags --libs) -lm
+          file lmdave
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: dangerous-dave-r36s-v07-arm64
+          path: upstream-lmdave/lmdave
+          
